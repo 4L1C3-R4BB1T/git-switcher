@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="options">
+    GITCHER
+    <button id="add-account" (click)="showModal = true">
+      <i class="fa-solid fa-circle-plus"></i>
+      Adicionar
+    </button>
+  </div>
+
+  <div class="accounts">
+    <ng-container *ngIf="accounts.length > 0; else noAccounts">
+      <app-card
+        *ngFor="let acc of accounts"
+        [account]="acc"
+        (activate)="setActive($event)"
+        (edit)="openEditModal($event)"
+        (remove)="removeAccount($event)"
+      />
+    </ng-container>
+
+    <ng-template #noAccounts>
+      <div class="no-accounts">
+        <i class="fas fa-user-slash"></i>
+        <p>Nenhuma conta adicionada ainda.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<app-account-modal
+  *ngIf="showModal"
+  [account]="selectedAccount"
+  (submit)="handleSubmit($event)"
+  (close)="handleClose()"
+/>

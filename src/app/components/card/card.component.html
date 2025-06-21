@@ -1,0 +1,37 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-actions">
+      <button class="icon-button" (click)="edit.emit(account)" title="Editar">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="icon-button" (click)="remove.emit(account.id)" title="Remover">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+
+    <div class="card-desc">
+      <span class="card-title">{{ account.type }}</span>
+
+      <span *ngIf="account.isActive" class="badge">
+        <i class="fas" [ngClass]="{
+        'fa-terminal': account.scope === 'local',
+        'fa-globe': account.scope === 'global'
+      }"></i>
+        Em uso ({{ account.scope }})
+      </span>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <img class="card-image" [src]="account.avatar_url || 'assets/default-avatar.png'">
+    <div class="card-content">
+      <span>{{ account.name }}</span>
+      <span>{{ account.username }}</span>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button (click)="setActive('local')">Local</button>
+    <button (click)="setActive('global')">Global</button>
+  </div>
+</div>

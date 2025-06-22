@@ -1,14 +1,33 @@
 {
   "name": "git-switcher",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "main.js",
+  "build": {
+    "appId": "com.seuapp.gitcher",
+    "productName": "GitCher",
+    "directories": {
+      "buildResources": "buildResources"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js",
+      "assets/**/*"
+    ],
+    "win": {
+      "icon": "buildResources/github-logo.png",
+      "target": ["nsis", "portable"]
+    }
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "electron": "ng build && electron .",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "postinstall": "electron-builder install-app-deps",
+    "dist": "electron-builder --windows"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +51,7 @@
     "@angular/compiler-cli": "^19.2.0",
     "@types/jasmine": "~5.1.0",
     "electron": "^36.4.0",
+    "electron-builder": "^23.0.0",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

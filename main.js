@@ -10,6 +10,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
     height: 800,
+    icon: iconPath,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -17,8 +18,10 @@ function createWindow() {
     }
   });
 
-  // win.loadFile(join(__dirname, 'dist/git-switcher/browser/index.html'));
-  win.loadURL('http://localhost:4200');
+  console.log('[main] App iniciado');
+
+  win.loadFile(join(__dirname, 'dist/git-switcher/browser/index.html'));
+  // win.loadURL('http://localhost:4200');
 }
 
 app.whenReady().then(createWindow);

@@ -1,4 +1,4 @@
-## :octocat: Sobre
+## 🗃️ Sobre
 
 Gitcher é um gerenciador de contas do GitHub. Com ele, é possível alternar rapidamente entre diferentes contas ao realizar operações com o Git, facilitando a configuração de nome e e-mail de forma prática e eficiente.
 

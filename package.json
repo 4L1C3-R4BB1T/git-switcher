@@ -2,21 +2,26 @@
   "name": "git-switcher",
   "version": "1.0.0",
   "main": "main.js",
+  "type": "module",
   "build": {
-    "appId": "com.seuapp.gitcher",
+    "appId": "com.app.gitcher",
     "productName": "GitCher",
     "directories": {
       "buildResources": "buildResources"
     },
     "files": [
-      "dist/**/*",
+      "dist/git-switcher/*",
       "main.js",
       "preload.js",
       "assets/**/*"
     ],
     "win": {
       "icon": "buildResources/github-logo.png",
-      "target": ["nsis", "portable"]
+      "target": "portable"
+    },
+    "portable": {
+      "unicode": false,
+      "artifactName": "gitcher.exe"
     }
   },
   "scripts": {
@@ -27,7 +32,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "postinstall": "electron-builder install-app-deps",
-    "dist": "electron-builder --windows"
+    "dist": "electron-builder"
   },
   "private": true,
   "dependencies": {

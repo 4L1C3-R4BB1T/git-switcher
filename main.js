@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const iconPath = join(__dirname, 'assets', 'github-logo.png');
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
@@ -18,13 +20,13 @@ function createWindow() {
     }
   });
 
-  console.log('[main] App iniciado');
-
   win.loadFile(join(__dirname, 'dist/git-switcher/browser/index.html'));
   // win.loadURL('http://localhost:4200');
 }
 
-app.whenReady().then(createWindow);
+app.whenReady()
+  .then(createWindow)
+  .catch(err => console.error('Erro ao iniciar o app:', err));
 
 ipcMain.handle('set-git-config', async (event, { userName, userEmail, scope }) => {
   const flag = scope === 'global' ? '--global' : '';

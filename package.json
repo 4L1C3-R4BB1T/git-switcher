@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "main.js",
   "type": "module",
+  "description": "Git Account Manager",
+  "author": {
+    "name": "Livia"
+  },
   "build": {
     "appId": "com.app.gitcher",
     "productName": "GitCher",

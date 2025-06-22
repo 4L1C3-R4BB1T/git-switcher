@@ -21,7 +21,6 @@ function createWindow() {
   });
 
   win.loadFile(join(__dirname, 'dist', 'git-switcher', 'browser', 'index.html'));
-
   // win.loadURL('http://localhost:4200');
 }
 

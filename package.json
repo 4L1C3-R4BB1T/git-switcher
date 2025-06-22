@@ -30,7 +30,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production --base-href ./ --output-path=dist/git-switcher/browser",
     "electron": "ng build && electron .",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

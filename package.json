@@ -14,10 +14,9 @@
       "buildResources": "buildResources"
     },
     "files": [
-      "dist/git-switcher/*",
+      "dist/git-switcher/browser/**/*",
       "main.js",
-      "preload.js",
-      "assets/**/*"
+      "preload.js"
     ],
     "win": {
       "icon": "buildResources/github-logo.png",
@@ -25,7 +24,7 @@
     },
     "portable": {
       "unicode": false,
-      "artifactName": "gitcher.exe"
+      "artifactName": "GitCher.exe"
     }
   },
   "scripts": {

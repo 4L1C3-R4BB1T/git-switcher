@@ -92,4 +92,14 @@ export class HomeComponent implements OnInit {
     return this.localGitService.getReposByAccount(accountId).length > 0;
   }
 
+  viewConfig(scope: 'local' | 'global') {
+    this.accountService.viewGitConfig(scope);
+  }
+
+  resetConfig(scope: 'local' | 'global') {
+    if (confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
+      this.accountService.resetGitConfig(scope);
+    }
+  }
+
 }

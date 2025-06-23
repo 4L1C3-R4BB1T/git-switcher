@@ -137,4 +137,22 @@ export class AccountService {
     }
   }
 
+  async viewGitConfig(scope: 'local' | 'global') {
+    try {
+      const result = await window.electronAPI.getGitConfig(scope);
+      this.toastr.success(result, `Configurações ${scope}`);
+    } catch (err) {
+      this.toastr.error(String(err));
+    }
+  }
+
+  async resetGitConfig(scope: 'local' | 'global') {
+    try {
+      const msg = await window.electronAPI.resetGitConfig(scope);
+      this.toastr.success(msg, `Resetado (${scope})`);
+    } catch (err) {
+      this.toastr.error(String(err));
+    }
+  }
+
 }

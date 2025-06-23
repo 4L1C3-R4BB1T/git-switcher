@@ -49,3 +49,23 @@ ipcMain.handle('select-repo', async () => {
   if (result.canceled) return null;
   return result.filePaths[0];
 });
+
+ipcMain.handle('get-git-config', async (event, scope) => {
+  const flag = scope === 'global' ? '--global' : '';
+  return new Promise((resolve, reject) => {
+    exec(`git config ${flag} --list`, (err, stdout) => {
+      if (err) return reject(err.message);
+      resolve(stdout);
+    });
+  });
+});
+
+ipcMain.handle('reset-git-config', async (event, scope) => {
+  const flag = scope === 'global' ? '--global' : '';
+  return new Promise((resolve, reject) => {
+    exec(`git config ${flag} --unset-all user.name && git config ${flag} --unset-all user.email`, (err) => {
+      if (err) return reject(err.message);
+      resolve(`Configurações ${scope} resetadas.`);
+    });
+  });
+});

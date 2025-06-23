@@ -10,6 +10,25 @@
     </button>
   </div>
 
+  <div class="git-advanced-actions">
+    <button (click)="viewConfig('global')">
+      <i class="fas fa-eye"></i>
+      Ver config global
+    </button>
+    <!-- <button (click)="resetConfig('global')">
+      <i class="fas fa-broom"></i>
+      Resetar config global
+    </button> -->
+    <button (click)="viewConfig('local')">
+      <i class="fas fa-eye"></i>
+      Ver config local
+    </button>
+    <!-- <button (click)="resetConfig('local')">
+      <i class="fas fa-broom"></i>
+      Resetar config local
+    </button> -->
+  </div>
+
   <div class="accounts">
     <ng-container *ngIf="accounts.length > 0; else noAccounts">
       <app-card

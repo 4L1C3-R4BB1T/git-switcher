@@ -10,6 +10,8 @@ declare global {
         repoPath?: string;
       }): Promise<string>;
       selectRepoDialog(): Promise<string | null>;
+      getGitConfig: (scope: 'local' | 'global') => Promise<string>;
+      resetGitConfig: (scope: 'local' | 'global') => Promise<string>;
     };
   }
 }

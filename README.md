@@ -52,6 +52,8 @@ npx electron . # em outro terminal
 
 ![Remover Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/5.png)  
 
+![Ativar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/6.png)  
+
 ---
 
 🔗 Links

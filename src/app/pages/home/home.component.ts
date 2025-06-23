@@ -61,6 +61,7 @@ export class HomeComponent implements OnInit {
   }
 
   handleClose() {
+    this.selectedAccount = undefined;
     this.showModal = false;
   }
 

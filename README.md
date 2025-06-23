@@ -41,18 +41,9 @@ npx electron . # em outro terminal
 
 ---
 
-## 🔍 Layout
-![Home](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/1.png)  
+## 🔍 Demonstração
 
-![Adicionar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/2.png)  
 
-![Conta Adicionada](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/3.png)  
-
-![Atualizar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/4.png)  
-
-![Remover Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/5.png)  
-
-![Ativar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/blob/main/src/assets/6.png)  
 
 ---
 

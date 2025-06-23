@@ -20,7 +20,14 @@ export class CardComponent {
     avatar_url: ''
   };
 
-  @Output() activate = new EventEmitter<{ id: number; scope: 'local' | 'global' }>();
+  @Input() linkedRepos: string[] = [];
+  @Input() usedLocally: boolean = false;
+
+  @Output() activate = new EventEmitter<{
+    id: number;
+    scope: 'local' | 'global';
+  }>();
+  @Output() activateLocal = new EventEmitter<void>();
   @Output() edit = new EventEmitter<Account>();
   @Output() remove = new EventEmitter<number>();
 

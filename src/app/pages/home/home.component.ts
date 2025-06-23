@@ -4,6 +4,7 @@ import { AccountModalComponent } from '../../components/account-modal/account-mo
 import { CardComponent } from '../../components/card/card.component';
 import { Account } from '../../models/account';
 import { AccountService } from '../../services/account.service';
+import { LocalGitService } from '../../services/local-git.service';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +20,10 @@ export class HomeComponent implements OnInit {
   showModal = false;
   selectedAccount?: Account;
 
-  constructor(private accountService: AccountService) { }
+  constructor(
+    private accountService: AccountService,
+    private localGitService: LocalGitService
+  ) { }
 
   ngOnInit(): void {
     this.loadAccounts();
@@ -68,6 +72,23 @@ export class HomeComponent implements OnInit {
   removeAccount(id: number) {
     this.accountService.removeAccount(id);
     this.loadAccounts();
+  }
+
+  setLocal(account: Account) {
+    this.accountService.setLocalAccount(account);
+  }
+
+  getLinkedRepos(accountId: number): string[] {
+    const repos = this.localGitService.getReposByAccount(accountId);
+    return repos.map(repo => this.getFolderName(repo));
+  }
+
+  getFolderName(path: string): string {
+    return path.split(/[\\/]/).pop() || path;
+  }
+
+  isAccountUsedLocally(accountId: number): boolean {
+    return this.localGitService.getReposByAccount(accountId).length > 0;
   }
 
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { Account } from '../models/account';
 import { GithubService } from './github.service';
-import { ToastrService } from 'ngx-toastr';
+import { LocalGitService } from './local-git.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,11 @@ export class AccountService {
 
   avatar?: string;
 
-  constructor(private githubService: GithubService, private toastr: ToastrService) {
+  constructor(
+    private githubService: GithubService,
+    private toastr: ToastrService,
+    private localGitService: LocalGitService
+  ) {
     this.loadAccounts();
   }
 
@@ -109,6 +114,27 @@ export class AccountService {
     });
     this.saveAccounts();
     this.toastr.success("Conta atualizada com sucesso.");
+  }
+
+  async setLocalAccount(account: Account): Promise<void> {
+    const repoPath = await window.electronAPI.selectRepoDialog();
+    if (!repoPath) return;
+    this.localGitService.set(repoPath, account.id);
+    try {
+      await window.electronAPI.setGitConfig({
+        userName: account.name,
+        userEmail: account.email,
+        scope: 'local',
+        repoPath
+      });
+
+      this.toastr.success(
+        `Conta local configurada para ${repoPath}`,
+        'Git Local'
+      );
+    } catch (err: any) {
+      this.toastr.error("Erro ao configurar Git local", err.message);
+    }
   }
 
 }

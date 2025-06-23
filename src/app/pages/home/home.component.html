@@ -15,7 +15,10 @@
       <app-card
         *ngFor="let acc of accounts"
         [account]="acc"
+        [linkedRepos]="getLinkedRepos(acc.id)"
+        [usedLocally]="isAccountUsedLocally(acc.id)"
         (activate)="setActive($event)"
+        (activateLocal)="setLocal(acc)"
         (edit)="openEditModal($event)"
         (remove)="removeAccount($event)"
       />

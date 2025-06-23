@@ -93,6 +93,8 @@ export class AccountService {
   }
 
   removeAccount(id: number): void {
+    const confirmar = window.confirm('Tem certeza que deseja remover esta conta?');
+    if (!confirmar) return;
     this.accounts = this.accounts.filter(acc => acc.id !== id);
     this.saveAccounts();
     this.toastr.success("Conta removida com sucesso.");

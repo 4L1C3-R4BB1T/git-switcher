@@ -41,6 +41,15 @@ npx electron . # em outro terminal
 
 ---
 
+## 🔍 Layout
+![Home](https://github.com/4L1C3-R4BB1T/git-switcher/tree/main/src/assets/1.png "Home")
+![Adicionar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/tree/main/src/assets/2.png "Adicionar Conta")
+![Adicionar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/tree/main/src/assets/3.png "Adicionar Conta")
+![Atualizar Conta](https://github.com/4L1C3-R4BB1T/git-switcher/tree/main/src/assets/4.png "Atualizar Conta")
+![Remover Conta](https://github.com/4L1C3-R4BB1T/git-switcher/tree/main/src/assets/5.png "Remover Conta")
+
+---
+
 🔗 Links
 * [Documentação Electron](https://www.electronjs.org/pt/docs/latest)  
 * [GitHub API](https://docs.github.com/pt/rest?apiVersion=2022-11-28)

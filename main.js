@@ -29,6 +29,14 @@ app.whenReady()
   .then(createWindow)
   .catch(err => console.error('Erro ao iniciar o app:', err));
 
+ipcMain.handle('select-repo', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  if (result.canceled) return null;
+  return result.filePaths[0];
+});
+
 ipcMain.handle('set-git-config', async (_, { userName, userEmail, scope, repoPath }) => {
   const flag = scope === 'global' ? '--global' : '';
   const repoOpt = scope === 'local' && repoPath ? `-C "${repoPath}"` : '';
@@ -43,30 +51,14 @@ ipcMain.handle('set-git-config', async (_, { userName, userEmail, scope, repoPat
   });
 });
 
-ipcMain.handle('select-repo', async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openDirectory']
-  });
-  if (result.canceled) return null;
-  return result.filePaths[0];
-});
-
-ipcMain.handle('get-git-config', async (event, scope) => {
-  const flag = scope === 'global' ? '--global' : '';
+ipcMain.handle('get-git-config', async (_, { scope, repoPath }) => {
+  const baseCmd = scope === 'global' ? `git config --global` : `git -C "${repoPath}" config`;
   return new Promise((resolve, reject) => {
-    exec(`git config ${flag} --list`, (err, stdout) => {
-      if (err) return reject(err.message);
-      resolve(stdout);
-    });
-  });
-});
-
-ipcMain.handle('reset-git-config', async (event, scope) => {
-  const flag = scope === 'global' ? '--global' : '';
-  return new Promise((resolve, reject) => {
-    exec(`git config ${flag} --unset-all user.name && git config ${flag} --unset-all user.email`, (err) => {
-      if (err) return reject(err.message);
-      resolve(`Configurações ${scope} resetadas.`);
+    exec(`${baseCmd} user.name && ${baseCmd} user.email`, (err, stdout) => {
+      if (err) return reject(`Erro ao obter configurações: ${err.message}`);
+      const [name, email] = stdout.trim().split('\n');
+      const result = [`user.name=${name || ''}`, `user.email=${email || ''}`].join('\n');
+      resolve(result);
     });
   });
 });

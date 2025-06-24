@@ -138,11 +138,22 @@ export class AccountService {
   }
 
   async viewGitConfig(scope: 'local' | 'global') {
-    try {
-      const result = await window.electronAPI.getGitConfig(scope);
-      this.toastr.info(result, `Configurações ${scope}`);
-    } catch (err) {
-      this.toastr.error(String(err));
+    if (scope === 'local') {
+      try {
+        const repoPath = await window.electronAPI.selectRepoDialog();
+        if (!repoPath) return;
+        const result = await window.electronAPI.getGitConfig({ scope, repoPath });
+        this.toastr.info(result, `Configurações Locais`);
+      } catch (err: any) {
+        this.toastr.error(err.message);
+      }
+    } else {
+      try {
+        const result = await window.electronAPI.getGitConfig({ scope });
+        this.toastr.info(result, `Configurações Globais`);
+      } catch (err: any) {
+        this.toastr.error(err.message);
+      }
     }
   }
 
@@ -150,8 +161,8 @@ export class AccountService {
     try {
       const msg = await window.electronAPI.resetGitConfig(scope);
       this.toastr.success(msg, `Resetado (${scope})`);
-    } catch (err) {
-      this.toastr.error(String(err));
+    } catch (err: any) {
+      this.toastr.error(err.message);
     }
   }
 

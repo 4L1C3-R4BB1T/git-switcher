@@ -107,7 +107,6 @@ export class HomeComponent implements OnInit {
   }
 
   importAccounts() {
-    localStorage.removeItem('local-git-configs');
     this.accountService.importAccounts();
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { Account } from '../models/account';
 import { GithubService } from './github.service';
 import { LocalGitService } from './local-git.service';
@@ -168,6 +168,7 @@ export class AccountService {
         this.accounts = [...this.accounts, ...imported];
         this.saveAccounts();
         this.toastr.success('Contas importadas com sucesso!');
+        localStorage.removeItem('local-git-configs');
         window.location.reload();
       })
       .catch(err => this.toastr.error('Erro ao importar', err.message));

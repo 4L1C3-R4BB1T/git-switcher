@@ -36,6 +36,7 @@
     .actions {
       display: flex;
       gap: 1em;
+      flex-wrap: wrap;
 
       button {
         display: flex;
@@ -129,7 +130,18 @@
     gap: 1rem;
     padding: 1rem;
 
-    .btn-add {
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .git-advanced-actions {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+
+    button {
       width: 100%;
       justify-content: center;
     }

@@ -158,11 +158,22 @@ export class AccountService {
   }
 
   async resetGitConfig(scope: 'local' | 'global') {
-    try {
-      const msg = await window.electronAPI.resetGitConfig(scope);
-      this.toastr.success(msg, `Resetado (${scope})`);
-    } catch (err: any) {
-      this.toastr.error(err.message);
+    if (scope === 'local') {
+      try {
+        const repoPath = await window.electronAPI.selectRepoDialog();
+        if (!repoPath) return;
+        const result = await window.electronAPI.resetGitConfig({ scope, repoPath });
+        this.toastr.info(result, `Resetado (${scope})`);
+      } catch (err: any) {
+        this.toastr.error(err.message);
+      }
+    } else {
+      try {
+        const msg = await window.electronAPI.resetGitConfig({ scope });
+        this.toastr.success(msg, `Resetado (${scope})`);
+      } catch (err: any) {
+        this.toastr.error(err.message);
+      }
     }
   }
 

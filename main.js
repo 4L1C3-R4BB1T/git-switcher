@@ -38,15 +38,10 @@ ipcMain.handle('select-repo', async () => {
 });
 
 ipcMain.handle('set-git-config', async (_, { userName, userEmail, scope, repoPath }) => {
-  const flag = scope === 'global' ? '--global' : '';
-  const repoOpt = scope === 'local' && repoPath ? `-C "${repoPath}"` : '';
+  const baseCmd = scope === 'global' ? `git config --global` : `git -C "${repoPath}" config`;
   return new Promise((resolve, reject) => {
-    exec(`git ${repoOpt} config ${flag} user.name "${userName}"`, (err) => {
-      if (err) return reject(err.message);
-      exec(`git ${repoOpt} config ${flag} user.email "${userEmail}"`, (err2) => {
-        if (err2) return reject(err2.message);
-        resolve('Git configurado com sucesso!');
-      });
+    exec(`${baseCmd} user.name "${userName}" && ${baseCmd} user.email "${userEmail}"`, (err) => {
+      if (err) return reject(`Erro ao aplicar configurações: ${err.message}`);
     });
   });
 });
@@ -59,6 +54,21 @@ ipcMain.handle('get-git-config', async (_, { scope, repoPath }) => {
       const [name, email] = stdout.trim().split('\n');
       const result = [`user.name=${name || ''}`, `user.email=${email || ''}`].join('\n');
       resolve(result);
+    });
+  });
+});
+
+ipcMain.handle('reset-git-config', async (_, { scope, repoPath }) => {
+  const baseCmd = scope === 'global' ? `git config --global` : `git -C "${repoPath}" config`;
+  return new Promise((resolve, reject) => {
+    exec(`${baseCmd} --unset user.name && ${baseCmd} --unset user.email`, (err) => {
+      if (err) {
+        if (err.message.includes('unset') || err.message.includes('not found')) {
+          return resolve('Nenhuma configuração para remover.');
+        }
+        return reject(`Erro ao resetar configurações: ${err.message}`);
+      }
+      resolve('Configurações de Git resetadas com sucesso!');
     });
   });
 });

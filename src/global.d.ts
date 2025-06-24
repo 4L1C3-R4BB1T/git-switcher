@@ -12,6 +12,8 @@ declare global {
       selectRepoDialog(): Promise<string | null>;
       getGitConfig: (scope: 'local' | 'global') => Promise<string>;
       resetGitConfig: (scope: 'local' | 'global') => Promise<string>;
+      exportAccounts(data: any[]): Promise<string>;
+      importAccounts(): Promise<any[]>;
     };
   }
 }

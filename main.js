@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -68,4 +69,30 @@ ipcMain.handle('reset-git-config', async (event, scope) => {
       resolve(`Configurações ${scope} resetadas.`);
     });
   });
+});
+
+ipcMain.handle('export-accounts', async (event, accounts) => {
+  const { filePath } = await dialog.showSaveDialog({
+    title: 'Exportar contas',
+    defaultPath: 'contas.json',
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+  });
+  if (filePath) {
+    fs.writeFileSync(filePath, JSON.stringify(accounts, null, 2), 'utf-8');
+    return 'Exportado com sucesso!';
+  }
+  throw new Error('Exportação cancelada');
+});
+
+ipcMain.handle('import-accounts', async () => {
+  const { filePaths } = await dialog.showOpenDialog({
+    title: 'Importar contas',
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+    properties: ['openFile'],
+  });
+  if (filePaths && filePaths[0]) {
+    const content = fs.readFileSync(filePaths[0], 'utf-8');
+    return JSON.parse(content);
+  }
+  throw new Error('Importação cancelada');
 });

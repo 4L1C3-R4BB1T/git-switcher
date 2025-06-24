@@ -4,10 +4,20 @@
       <img class="github-logo" src="assets/github-logo.png" alt="Logo GitCher">
       <span class="logo-text">gitcher</span>
     </div>
-    <button id="add-account" class="btn-add" (click)="showModal = true">
-      <i class="fa-solid fa-circle-plus"></i>
-      <span>Adicionar</span>
-    </button>
+    <div class="actions">
+      <button id="add-account" class="btn-add" (click)="showModal = true">
+        <i class="fa-solid fa-circle-plus"></i>
+        <span>Adicionar</span>
+      </button>
+      <button (click)="exportAccounts()">
+        <i class="fas fa-file-export"></i>
+        Exportar
+      </button>
+      <button (click)="importAccounts()">
+        <i class="fas fa-file-import"></i>
+        Importar
+      </button>
+    </div>
   </div>
 
   <div class="git-advanced-actions">
@@ -15,14 +25,14 @@
       <i class="fas fa-eye"></i>
       Ver config global
     </button>
-    <!-- <button (click)="resetConfig('global')">
+    <button (click)="resetConfig('global')">
       <i class="fas fa-broom"></i>
       Resetar config global
-    </button> -->
-    <button (click)="viewConfig('local')">
+    </button>
+    <!-- <button (click)="viewConfig('local')">
       <i class="fas fa-eye"></i>
       Ver config local
-    </button>
+    </button> -->
     <!-- <button (click)="resetConfig('local')">
       <i class="fas fa-broom"></i>
       Resetar config local

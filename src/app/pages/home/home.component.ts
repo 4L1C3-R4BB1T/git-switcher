@@ -102,4 +102,13 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  exportAccounts() {
+    this.accountService.exportAccounts();
+  }
+
+  importAccounts() {
+    localStorage.removeItem('local-git-configs');
+    this.accountService.importAccounts();
+  }
+
 }

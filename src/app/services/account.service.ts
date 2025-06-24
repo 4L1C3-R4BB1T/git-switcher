@@ -155,4 +155,20 @@ export class AccountService {
     }
   }
 
+  exportAccounts(): void {
+    window.electronAPI.exportAccounts(this.accounts)
+      .then(() => this.toastr.success('Contas exportadas com sucesso!'))
+      .catch(err => this.toastr.error('Erro ao exportar', err.message));
+  }
+
+  importAccounts(): void {
+    window.electronAPI.importAccounts()
+      .then((imported: Account[]) => {
+        this.accounts = [...this.accounts, ...imported];
+        this.saveAccounts();
+        this.toastr.success('Contas importadas com sucesso!');
+      })
+      .catch(err => this.toastr.error('Erro ao importar', err.message));
+  }
+
 }

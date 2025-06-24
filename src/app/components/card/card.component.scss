@@ -31,6 +31,12 @@
 
         &:hover {
           color: #334155;
+          cursor: pointer;
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: scale(0.98);
         }
       }
     }
@@ -149,6 +155,11 @@
       &:hover {
         opacity: 0.85;
         cursor: pointer;
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: scale(0.98);
       }
     }
   }

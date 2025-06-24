@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { Account } from '../models/account';
 import { GithubService } from './github.service';
 import { LocalGitService } from './local-git.service';
@@ -140,7 +140,7 @@ export class AccountService {
   async viewGitConfig(scope: 'local' | 'global') {
     try {
       const result = await window.electronAPI.getGitConfig(scope);
-      this.toastr.success(result, `Configurações ${scope}`);
+      this.toastr.info(result, `Configurações ${scope}`);
     } catch (err) {
       this.toastr.error(String(err));
     }
@@ -156,7 +156,8 @@ export class AccountService {
   }
 
   exportAccounts(): void {
-    window.electronAPI.exportAccounts(this.accounts)
+    const exportData = this.accounts.map(account => ({ ...account, isActive: false }));
+    window.electronAPI.exportAccounts(exportData)
       .then(() => this.toastr.success('Contas exportadas com sucesso!'))
       .catch(err => this.toastr.error('Erro ao exportar', err.message));
   }
@@ -167,6 +168,7 @@ export class AccountService {
         this.accounts = [...this.accounts, ...imported];
         this.saveAccounts();
         this.toastr.success('Contas importadas com sucesso!');
+        window.location.reload();
       })
       .catch(err => this.toastr.error('Erro ao importar', err.message));
   }

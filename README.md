@@ -34,9 +34,9 @@ Ctrl+Shift+I
 ```
 
 ```bash
-# Executar o projeto sem build
+# Executar o projeto apontando para localhost
 ng serve       # em um terminal
-npx electron . # em outro terminal
+npx electron . --dev # em outro terminal
 ```
 
 ---

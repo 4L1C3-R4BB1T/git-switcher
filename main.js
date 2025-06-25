@@ -9,6 +9,8 @@ const __dirname = dirname(__filename);
 
 const iconPath = join(__dirname, 'assets', 'github-logo.png');
 
+const isDev = process.argv.includes('--dev');
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1000,
@@ -21,8 +23,11 @@ function createWindow() {
     }
   });
 
-  // win.loadFile(join(__dirname, 'dist', 'git-switcher', 'browser', 'index.html'));
-  win.loadURL('http://localhost:4200');
+  if (isDev) {
+    win.loadURL('http://localhost:4200');
+  } else {
+    win.loadFile(join(__dirname, 'dist', 'git-switcher', 'browser', 'index.html'));
+  }
 }
 
 app.whenReady()

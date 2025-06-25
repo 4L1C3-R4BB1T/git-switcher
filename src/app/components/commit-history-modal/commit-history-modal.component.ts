@@ -17,14 +17,18 @@ export class CommitHistoryModalComponent implements OnInit {
 
   commits: { author: string; message: string; date: string }[] = [];
 
+  isLoadingCommits = false;
+
   get repoName(): string {
     return this.repoPath.split(/[/\\]/).pop() ?? this.repoPath;
   }
 
   ngOnInit(): void {
+    this.isLoadingCommits = true;
     window.electronAPI.getCommits(this.repoPath)
       .then(result => this.commits = result)
-      .catch(() => this.commits = []);
+      .catch(() => this.commits = [])
+      .finally(() => this.isLoadingCommits = false);
   }
 
 }

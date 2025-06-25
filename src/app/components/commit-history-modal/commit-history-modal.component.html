@@ -3,7 +3,11 @@
 <div class="modal">
   <h2>Commits de {{ repoName }}</h2>
 
-  <ul class="commits-list" *ngIf="commits.length; else noCommits">
+  <div *ngIf="isLoadingCommits" class="loading">
+    <i class="fas fa-spinner fa-spin"></i> Carregando commits...
+  </div>
+
+  <ul class="commits-list" *ngIf="!isLoadingCommits && commits.length; else noCommits">
     <li *ngFor="let commit of commits">
       <strong>{{ commit.author }}</strong> - {{ commit.message }}
       <div class="date">{{ commit.date | date:'short' }}</div>
@@ -11,7 +15,9 @@
   </ul>
 
   <ng-template #noCommits>
-    <p>Nenhum commit encontrado.</p>
+    <div class="empty-message" *ngIf="!isLoadingCommits">
+      <i class="fas fa-ban"></i> Nenhum commit encontrado.
+    </div>
   </ng-template>
 
   <div class="buttons">

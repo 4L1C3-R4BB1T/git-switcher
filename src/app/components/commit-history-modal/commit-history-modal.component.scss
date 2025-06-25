@@ -24,6 +24,20 @@
     font-size: 1.2em;
   }
 
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    padding: 1.5em;
+  }
+
+  .empty-message {
+    text-align: center;
+    padding: 1.5em;
+    color: #94a3b8;
+  }
+
   .commits-list {
     list-style: none;
     max-height: 155px;

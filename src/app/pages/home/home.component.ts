@@ -105,7 +105,7 @@ export class HomeComponent implements OnInit {
   }
 
   resetConfig(scope: 'local' | 'global') {
-    if (confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
+    if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
       this.accountService.resetGitConfig(scope);
     }
   }

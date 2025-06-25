@@ -134,6 +134,12 @@
 
 @media (max-width: 820px) {
   .container {
+    .accounts {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .git-advanced-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;

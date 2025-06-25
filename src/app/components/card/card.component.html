@@ -39,7 +39,12 @@
       <span>Repositórios ativos</span>
     </div>
     <ul>
-      <li *ngFor="let repo of linkedRepos">{{ repo }}</li>
+      <li *ngFor="let repo of linkedRepos">
+        {{ getRepoName(repo) }}
+        <button class="history-btn" (click)="viewCommits(repo)" title="Ver commits">
+          <i class="fas fa-clock-rotate-left"></i>
+        </button>
+      </li>
     </ul>
   </div>
 

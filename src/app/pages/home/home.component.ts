@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AccountModalComponent } from '../../components/account-modal/account-modal.component';
 import { CardComponent } from '../../components/card/card.component';
+import { CommitHistoryModalComponent } from '../../components/commit-history-modal/commit-history-modal.component';
 import { Account } from '../../models/account';
 import { AccountService } from '../../services/account.service';
 import { LocalGitService } from '../../services/local-git.service';
@@ -9,7 +10,12 @@ import { LocalGitService } from '../../services/local-git.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CardComponent, AccountModalComponent],
+  imports: [
+    CommonModule,
+    CardComponent,
+    AccountModalComponent,
+    CommitHistoryModalComponent
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -19,6 +25,9 @@ export class HomeComponent implements OnInit {
 
   showModal = false;
   selectedAccount?: Account;
+
+  selectedRepo: string | null = null;
+  selectedHistoryAccount: Account | null = null;
 
   constructor(
     private accountService: AccountService,
@@ -80,8 +89,7 @@ export class HomeComponent implements OnInit {
   }
 
   getLinkedRepos(accountId: number): string[] {
-    const repos = this.localGitService.getReposByAccount(accountId);
-    return repos.map(repo => this.getFolderName(repo));
+    return this.localGitService.getReposByAccount(accountId);
   }
 
   getFolderName(path: string): string {
@@ -97,7 +105,7 @@ export class HomeComponent implements OnInit {
   }
 
   resetConfig(scope: 'local' | 'global') {
-    if (confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
+    if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
       this.accountService.resetGitConfig(scope);
     }
   }
@@ -110,4 +118,13 @@ export class HomeComponent implements OnInit {
     this.accountService.importAccounts();
   }
 
+  openHistory(account: Account, repo: string): void {
+    this.selectedRepo = repo;
+    this.selectedHistoryAccount = account;
+  }
+
+  closeHistory(): void {
+    this.selectedRepo = null;
+    this.selectedHistoryAccount = null;
+  }
 }

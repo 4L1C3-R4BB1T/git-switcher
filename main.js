@@ -98,3 +98,17 @@ ipcMain.handle('import-accounts', async () => {
   }
   throw new Error('Importação cancelada');
 });
+
+ipcMain.handle('get-commits', async (event, repoPath) => {
+  return new Promise((resolve, reject) => {
+    const command = `git -C "${repoPath}" log --pretty=format:"%an|%s|%ad" --date=iso --max-count=10`;
+    exec(command, (err, stdout) => {
+      if (err) return reject(err.message);
+      const commits = stdout.split('\n').map(line => {
+        const [author, message, date] = line.split('|');
+        return { author, message, date };
+      });
+      resolve(commits);
+    });
+  });
+});

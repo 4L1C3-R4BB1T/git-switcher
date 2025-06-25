@@ -1,0 +1,20 @@
+<div class="modal-overlay" (click)="close.emit()"></div>
+
+<div class="modal">
+  <h2>Commits de {{ repoName }}</h2>
+
+  <ul class="commits-list" *ngIf="commits.length; else noCommits">
+    <li *ngFor="let commit of commits">
+      <strong>{{ commit.author }}</strong> - {{ commit.message }}
+      <div class="date">{{ commit.date | date:'short' }}</div>
+    </li>
+  </ul>
+
+  <ng-template #noCommits>
+    <p>Nenhum commit encontrado.</p>
+  </ng-template>
+
+  <div class="buttons">
+    <button (click)="close.emit()">Fechar</button>
+  </div>
+</div>

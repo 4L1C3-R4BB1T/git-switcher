@@ -31,8 +31,18 @@ export class CardComponent {
   @Output() edit = new EventEmitter<Account>();
   @Output() remove = new EventEmitter<number>();
 
+  @Output() viewHistory = new EventEmitter<string>();
+
   setActive(scope: 'local' | 'global') {
     this.activate.emit({ id: this.account.id, scope });
+  }
+
+  getRepoName(path: string): string {
+    return path.split(/[/\\]/).pop() ?? path;
+  }
+
+  viewCommits(repoPath: string): void {
+    this.viewHistory.emit(repoPath);
   }
 
 }

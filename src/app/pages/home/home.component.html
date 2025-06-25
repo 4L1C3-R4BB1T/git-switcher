@@ -55,6 +55,7 @@
         (activateLocal)="setLocal(acc)"
         (edit)="openEditModal($event)"
         (remove)="removeAccount($event)"
+        (viewHistory)="openHistory(acc, $event)"
       />
     </ng-container>
 
@@ -72,4 +73,11 @@
   [account]="selectedAccount"
   (submit)="handleSubmit($event)"
   (close)="handleClose()"
+/>
+
+<app-commit-history-modal
+  *ngIf="selectedRepo && selectedHistoryAccount"
+  [repoPath]="selectedRepo"
+  [account]="selectedHistoryAccount"
+  (close)="closeHistory()"
 />

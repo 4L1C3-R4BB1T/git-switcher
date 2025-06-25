@@ -41,12 +41,6 @@ npx electron . # em outro terminal
 
 ---
 
-## 🔍 Demonstração
-
-
-
----
-
 🔗 Links
 * [Documentação Electron](https://www.electronjs.org/pt/docs/latest)  
 * [GitHub API](https://docs.github.com/pt/rest?apiVersion=2022-11-28)

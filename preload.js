@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   selectRepoDialog: () => ipcRenderer.invoke('select-repo'),
   getGitConfig: (config) => ipcRenderer.invoke('get-git-config', config),
   resetGitConfig: (config) => ipcRenderer.invoke('reset-git-config', config),
-  exportAccounts: (data) => ipcRenderer.invoke('export-accounts', data),
-  importAccounts: () => ipcRenderer.invoke('import-accounts')
+  exportAccounts: (accounts) => ipcRenderer.invoke('export-accounts', accounts),
+  importAccounts: () => ipcRenderer.invoke('import-accounts'),
+  getCommits: (repoPath) => ipcRenderer.invoke('get-commits', repoPath)
 });

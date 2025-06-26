@@ -20,19 +20,27 @@
       "preload.js"
     ],
     "win": {
-      "icon": "buildResources/github-logo.png"
+      "icon": "buildResources/icon.png"
     }
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "buildresources/icon",
+        "extraResources": [
+          {
+            "from": "dist/",
+            "to": "dist/"
+          }
+        ]
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "git-switcher",
             "setupExe": "GitSwitcherSetup.exe",
-            "setupIcon": "buildResources/github-logo.ico"
+            "setupIcon": "buildResources/icon.ico"
           }
         }
       ]

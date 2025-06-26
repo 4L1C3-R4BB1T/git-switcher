@@ -1,8 +1,11 @@
 import { exec } from 'child_process';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import electronSquirrelStartup from 'electron-squirrel-startup';
 import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+
+if (electronSquirrelStartup) app.quit();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,7 +29,7 @@ function createWindow() {
   if (isDev) {
     win.loadURL('http://localhost:4200');
   } else {
-    win.loadFile(join(__dirname, 'dist', 'git-switcher', 'browser', 'index.html'));
+    win.loadFile(join(__dirname, 'dist', 'browser', 'index.html'));
   }
 }
 

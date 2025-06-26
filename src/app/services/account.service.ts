@@ -93,6 +93,27 @@ export class AccountService {
     }
   }
 
+  async setLocalAccount(account: Account): Promise<void> {
+    const repoPath = await window.electronAPI.selectRepoDialog();
+    if (!repoPath) return;
+    this.localGitService.set(repoPath, account.id);
+    try {
+      await window.electronAPI.setGitConfig({
+        userName: account.name,
+        userEmail: account.email,
+        scope: 'local',
+        repoPath
+      });
+
+      this.toastrService.success(
+        `Conta local configurada para ${repoPath}`,
+        'Git Local'
+      );
+    } catch (err: any) {
+      this.toastrService.error("Erro ao configurar Git local", err.message);
+    }
+  }
+
   getActiveAccount(): Account | undefined {
     return this.accounts.find(acc => acc.isActive);
   }
@@ -114,27 +135,6 @@ export class AccountService {
     });
     this.saveAccounts();
     this.toastrService.success("Conta atualizada com sucesso.");
-  }
-
-  async setLocalAccount(account: Account): Promise<void> {
-    const repoPath = await window.electronAPI.selectRepoDialog();
-    if (!repoPath) return;
-    this.localGitService.set(repoPath, account.id);
-    try {
-      await window.electronAPI.setGitConfig({
-        userName: account.name,
-        userEmail: account.email,
-        scope: 'local',
-        repoPath
-      });
-
-      this.toastrService.success(
-        `Conta local configurada para ${repoPath}`,
-        'Git Local'
-      );
-    } catch (err: any) {
-      this.toastrService.error("Erro ao configurar Git local", err.message);
-    }
   }
 
   async viewGitConfig(scope: 'local' | 'global') {

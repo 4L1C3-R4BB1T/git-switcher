@@ -50,6 +50,7 @@ ipcMain.handle('set-git-config', async (_, { userName, userEmail, scope, repoPat
   return new Promise((resolve, reject) => {
     exec(`${baseCmd} user.name "${userName}" && ${baseCmd} user.email "${userEmail}"`, (err) => {
       if (err) return reject(`Erro ao aplicar configurações: ${err.message}`);
+      resolve('Configuração aplicada com sucesso!');
     });
   });
 });
@@ -89,7 +90,7 @@ ipcMain.handle('export-accounts', async (event, accounts) => {
   });
   if (filePath) {
     fs.writeFileSync(filePath, JSON.stringify(accounts, null, 2), 'utf-8');
-    return 'Exportado com sucesso!';
+    return resolve('Exportado com sucesso!');
   }
   throw new Error('Exportação cancelada');
 });

@@ -29,7 +29,11 @@
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {}
+          "config": {
+            "name": "git-switcher",
+            "setupExe": "GitSwitcherSetup.exe",
+            "setupIcon": "buildResources/github-logo.ico"
+          }
         }
       ]
     }

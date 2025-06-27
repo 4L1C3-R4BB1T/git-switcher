@@ -1,7 +1,7 @@
 <div class="modal-overlay" (click)="close.emit()"></div>
 
 <div class="modal">
-  <h2>Commits de {{ repoName }}</h2>
+  <h2>Commits de <span class="repo-name">{{ repoName }}</span></h2>
 
   <div *ngIf="isLoadingCommits" class="loading">
     <i class="fas fa-spinner fa-spin"></i> Carregando commits...

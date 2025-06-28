@@ -6,10 +6,11 @@ Gitcher é um gerenciador de contas do GitHub. Com ele, é possível alternar ra
 
 ## ⚙️ Como executar o projeto
 
-Clone esse repositório:
+Clone este repositório:
 
 ```bash
 git clone https://github.com/4L1C3-R4BB1T/git-switcher.git
+cd git-switcher
 ```
 
 Instale as dependências do projeto:
@@ -24,19 +25,29 @@ Execute o projeto:
 npm run electron
 ```
 
+### 💻 Executar o projeto em modo desenvolvimento (localhost)
+
+```bash
+ng serve       # em um terminal
+npx electron . --dev # em outro terminal
+```
+
+### 📦 Gerar o instalador (build)
+
+```bash
+npm run build
+npm run make
+```
+
+> O instalador será gerado na pasta: ```git-switcher\out\make```
+
 ---
 
 ## 💡Comandos Úteis
 
 ```bash
 # Abrir o DevTools no Electron
-Ctrl+Shift+I
-```
-
-```bash
-# Executar o projeto apontando para localhost
-ng serve       # em um terminal
-npx electron . --dev # em outro terminal
+Ctrl + Shift + I
 ```
 
 ---

@@ -121,8 +121,17 @@ export class AccountService {
   removeAccount(id: number): void {
     const confirmar = window.confirm('Tem certeza que deseja remover esta conta?');
     if (!confirmar) return;
+
     this.accounts = this.accounts.filter(acc => acc.id !== id);
     this.saveAccounts();
+
+    const raw = localStorage.getItem('local-git-configs');
+    if (raw) {
+      const localConfigs = JSON.parse(raw);
+      const updated = localConfigs.filter((item: any) => item.accountId !== id);
+      localStorage.setItem('local-git-configs', JSON.stringify(updated));
+    }
+
     this.toastrService.success("Conta removida com sucesso.");
   }
 

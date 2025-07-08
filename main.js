@@ -29,7 +29,7 @@ function createWindow() {
   if (isDev) {
     win.loadURL('http://localhost:4200');
   } else {
-    win.loadFile(join(__dirname, 'dist', 'browser', 'index.html'));
+    win.loadFile(join(__dirname, 'dist', 'git-switcher', 'browser', 'index.html'));
   }
 }
 

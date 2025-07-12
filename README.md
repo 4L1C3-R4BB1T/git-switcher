@@ -52,6 +52,10 @@ Ctrl + Shift + I
 
 ---
 
+https://github.com/user-attachments/assets/cdf6c902-ecbb-4614-ab42-985c2e96d5f2
+
+---
+
 🔗 Links
 * [Documentação Electron](https://www.electronjs.org/pt/docs/latest)  
 * [GitHub API](https://docs.github.com/pt/rest?apiVersion=2022-11-28)

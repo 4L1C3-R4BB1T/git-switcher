@@ -1,3 +1,5 @@
+import { Account } from './app/models/account';
+
 export { };
 
 declare global {
@@ -22,9 +24,9 @@ declare global {
         repoPath?: string;
       }) => Promise<string>;
 
-      exportAccounts: (accounts: any[]) => Promise<void>;
+      exportAccounts: (accounts: Account[]) => Promise<void>;
 
-      importAccounts: () => Promise<any[]>;
+      importAccounts: () => Promise<Account[]>;
 
       getCommits: (repoPath: string) => Promise<
         {

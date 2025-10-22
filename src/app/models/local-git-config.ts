@@ -1,4 +1,4 @@
 export interface LocalGitConfig {
-  repoPath: string;
-  accountId: number;
+	repoPath: string;
+	accountId: number;
 }

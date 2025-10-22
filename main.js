@@ -90,7 +90,7 @@ ipcMain.handle('export-accounts', async (event, accounts) => {
   });
   if (filePath) {
     fs.writeFileSync(filePath, JSON.stringify(accounts, null, 2), 'utf-8');
-    return resolve('Exportado com sucesso!');
+    return 'Exportado com sucesso!';
   }
   throw new Error('Exportação cancelada');
 });

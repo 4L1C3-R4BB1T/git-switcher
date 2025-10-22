@@ -1,3 +1,3 @@
 export interface GitHubUser {
-  avatar_url: string;
+	avatar_url: string;
 }

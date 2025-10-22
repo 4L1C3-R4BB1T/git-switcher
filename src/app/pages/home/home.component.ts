@@ -8,123 +8,127 @@ import { AccountService } from '../../services/account.service';
 import { LocalGitService } from '../../services/local-git.service';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [
-    CommonModule,
-    CardComponent,
-    AccountModalComponent,
-    CommitHistoryModalComponent
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+	selector: 'app-home',
+	standalone: true,
+	imports: [
+		CommonModule,
+		CardComponent,
+		AccountModalComponent,
+		CommitHistoryModalComponent
+	],
+	templateUrl: './home.component.html',
+	styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+	accounts: Account[] = [];
 
-  accounts: Account[] = [];
+	showModal = false;
+	selectedAccount?: Account;
 
-  showModal = false;
-  selectedAccount?: Account;
+	selectedRepo: string | null = null;
+	selectedHistoryAccount: Account | null = null;
 
-  selectedRepo: string | null = null;
-  selectedHistoryAccount: Account | null = null;
+	constructor(
+		private accountService: AccountService,
+		private localGitService: LocalGitService
+	) { }
 
-  constructor(
-    private accountService: AccountService,
-    private localGitService: LocalGitService
-  ) { }
+	ngOnInit(): void {
+		this.loadAccounts();
+	}
 
-  ngOnInit(): void {
-    this.loadAccounts();
-  }
+	loadAccounts() {
+		this.accounts = this.accountService.getAll();
+	}
 
-  loadAccounts() {
-    this.accounts = this.accountService.getAll();
-  }
+	openAddModal() {
+		this.selectedAccount = undefined;
+		this.showModal = true;
+	}
 
-  openAddModal() {
-    this.selectedAccount = undefined;
-    this.showModal = true;
-  }
+	openEditModal(account: Account) {
+		this.selectedAccount = account;
+		this.showModal = true;
+	}
 
-  openEditModal(account: Account) {
-    this.selectedAccount = account;
-    this.showModal = true;
-  }
+	handleSubmit(data: Omit<Account, 'id' | 'avatar_url'>) {
+		if (this.selectedAccount) {
+			const updatedAccount: Account = {
+				...this.selectedAccount,
+				...data
+			};
+			this.accountService.updateAccount(updatedAccount);
+		} else {
+			if (!data?.username) return;
+			this.accountService.addAccount(data);
+		}
 
-  handleSubmit(data: Omit<Account, 'id' | 'avatar_url'>) {
-    if (this.selectedAccount) {
-      const updatedAccount: Account = {
-        ...this.selectedAccount,
-        ...data
-      };
-      this.accountService.updateAccount(updatedAccount);
-    } else {
-      if (!data?.username) return;
-      this.accountService.addAccount(data);
-    }
+		this.selectedAccount = undefined;
+		this.loadAccounts();
+		this.handleClose();
+	}
 
-    this.selectedAccount = undefined;
-    this.loadAccounts();
-    this.handleClose();
-  }
+	handleClose() {
+		this.selectedAccount = undefined;
+		this.showModal = false;
+	}
 
-  handleClose() {
-    this.selectedAccount = undefined;
-    this.showModal = false;
-  }
+	setActive({ id, scope }: { id: number; scope: 'local' | 'global' }) {
+		this.accountService.setActiveAccount(id, scope);
+		this.loadAccounts();
+	}
 
-  setActive({ id, scope }: { id: number; scope: 'local' | 'global' }) {
-    this.accountService.setActiveAccount(id, scope);
-    this.loadAccounts();
-  }
+	removeAccount(id: number) {
+		this.accountService.removeAccount(id);
+		this.loadAccounts();
+	}
 
-  removeAccount(id: number) {
-    this.accountService.removeAccount(id);
-    this.loadAccounts();
-  }
+	setLocal(account: Account) {
+		this.accountService.setLocalAccount(account);
+	}
 
-  setLocal(account: Account) {
-    this.accountService.setLocalAccount(account);
-  }
+	getLinkedRepos(accountId: number): string[] {
+		return this.localGitService.getReposByAccount(accountId);
+	}
 
-  getLinkedRepos(accountId: number): string[] {
-    return this.localGitService.getReposByAccount(accountId);
-  }
+	getFolderName(path: string): string {
+		return path.split(/[\\/]/).pop() || path;
+	}
 
-  getFolderName(path: string): string {
-    return path.split(/[\\/]/).pop() || path;
-  }
+	isAccountUsedLocally(accountId: number): boolean {
+		return this.localGitService.getReposByAccount(accountId).length > 0;
+	}
 
-  isAccountUsedLocally(accountId: number): boolean {
-    return this.localGitService.getReposByAccount(accountId).length > 0;
-  }
+	viewConfig(scope: 'local' | 'global') {
+		this.accountService.viewGitConfig(scope);
+	}
 
-  viewConfig(scope: 'local' | 'global') {
-    this.accountService.viewGitConfig(scope);
-  }
+	async resetConfig(scope: 'local' | 'global') {
+		if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
+			const needsReload = await this.accountService.resetGitConfig(scope);
+			if (needsReload) {
+				window.location.reload();
+			}
+			this.loadAccounts();
+		}
+	}
 
-  resetConfig(scope: 'local' | 'global') {
-    if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
-      this.accountService.resetGitConfig(scope);
-    }
-  }
+	exportAccounts() {
+		this.accountService.exportAccounts();
+	}
 
-  exportAccounts() {
-    this.accountService.exportAccounts();
-  }
+	async importAccounts() {
+		this.accountService.importAccounts();
+		window.location.reload();
+	}
 
-  importAccounts() {
-    this.accountService.importAccounts();
-  }
+	openHistory(account: Account, repo: string): void {
+		this.selectedRepo = repo;
+		this.selectedHistoryAccount = account;
+	}
 
-  openHistory(account: Account, repo: string): void {
-    this.selectedRepo = repo;
-    this.selectedHistoryAccount = account;
-  }
-
-  closeHistory(): void {
-    this.selectedRepo = null;
-    this.selectedHistoryAccount = null;
-  }
+	closeHistory(): void {
+		this.selectedRepo = null;
+		this.selectedHistoryAccount = null;
+	}
 }

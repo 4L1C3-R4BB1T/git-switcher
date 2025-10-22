@@ -121,3 +121,13 @@ ipcMain.handle('get-commits', async (event, repoPath) => {
     });
   });
 });
+
+ipcMain.handle('is-git-repo', async (_, repoPath) => {
+	try {
+		const gitPath = join(repoPath, '.git');
+		fs.access(gitPath, fs.constants.F_OK);
+		return true;
+	} catch (error) {
+		return false;
+	}
+});

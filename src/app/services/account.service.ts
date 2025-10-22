@@ -73,31 +73,47 @@ export class AccountService {
 	}
 
 	async setActiveAccount(id: number, scope: 'local' | 'global'): Promise<void> {
-		this.accounts = this.accounts.map(acc => ({
-			...acc,
-			isActive: acc.id === id,
-			scope: acc.id === id ? scope : undefined
-		}));
-		this.saveAccounts();
-
 		const activeAcc = this.accounts.find(acc => acc.id === id);
 		if (!activeAcc) {
 			this.toastrService.error("Conta não encontrada.");
 			return;
 		}
 
+		let finalScope = scope;
+
+		if (scope === 'local') {
+			const isLocallyTracked = this.localGitService.getReposByAccount(id).length > 0;
+			if (!isLocallyTracked) {
+				this.toastrService.warning("Esta conta não está associada a nenhum repositório local configurado. Ativando como global.");
+				finalScope = 'global';
+			}
+		}
+
+		this.accounts = this.accounts.map(acc => ({
+			...acc,
+			isActive: acc.id === id,
+			scope: acc.id === id ? finalScope : undefined
+		}));
+		this.saveAccounts();
+
 		try {
 			await this.electronApiService.setGitConfig({
 				userName: activeAcc.name,
 				userEmail: activeAcc.email,
-				scope
+				scope: finalScope
 			});
 			this.toastrService.success(
 				`Git configurado com: ${activeAcc.name} <${activeAcc.email}>`,
-				`Conta ativada (${scope})`
+				`Conta ativada (${finalScope})`
 			);
 		} catch (err: any) {
-			this.toastrService.error("Erro ao configurar Git", err.message);
+			this.accounts = this.accounts.map(acc => ({
+				...acc,
+				scope: acc.id === id ? undefined : acc.scope
+			}));
+			this.saveAccounts();
+
+			this.toastrService.error("Erro ao configurar Git global", err.message);
 		}
 	}
 
@@ -105,7 +121,19 @@ export class AccountService {
 		const repoPath = await this.electronApiService.selectRepoDialog();
 		if (!repoPath) return;
 
+		try {
+			const isRepo = await this.electronApiService.isGitRepo(repoPath);
+			if (!isRepo) {
+				this.toastrService.error(`O diretório selecionado não é um repositório Git válido. Verifique se contém a pasta .git.`);
+				return;
+			}
+		} catch (err: any) {
+			this.toastrService.error(`Falha ao verificar o diretório: ${err.message}`);
+			return;
+		}
+
 		this.localGitService.set(repoPath, account.id);
+
 		try {
 			await this.electronApiService.setGitConfig({
 				userName: account.name,
@@ -119,7 +147,8 @@ export class AccountService {
 				'Git Local'
 			);
 		} catch (err: any) {
-			this.toastrService.error("Erro ao configurar Git local", err.message);
+			this.localGitService.remove(repoPath);
+			this.toastrService.error("Erro ao configurar Git local. Associação removida.", err.message);
 		}
 	}
 

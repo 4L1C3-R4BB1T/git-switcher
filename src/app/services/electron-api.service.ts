@@ -58,4 +58,8 @@ export class ElectronApiService {
 	getCommits(repoPath: string): Promise<GitCommit[]> {
 		return this.api.getCommits(repoPath);
 	}
+
+	isGitRepo(repoPath: string): Promise<boolean> {
+		return this.api.isGitRepo(repoPath);
+	}
 }

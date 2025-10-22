@@ -105,11 +105,15 @@ export class HomeComponent implements OnInit {
 
 	async resetConfig(scope: 'local' | 'global') {
 		if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
-			const needsReload = await this.accountService.resetGitConfig(scope);
-			if (needsReload) {
-				window.location.reload();
+			try {
+				const needsReload = await this.accountService.resetGitConfig(scope);
+				if (needsReload) {
+					window.location.reload();
+				}
+				this.loadAccounts();
+			} catch (error) {
+				this.loadAccounts();
 			}
-			this.loadAccounts();
 		}
 	}
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Account } from '../../models/account';
@@ -11,7 +11,7 @@ import { Account } from '../../models/account';
 	templateUrl: './account-modal.component.html',
 	styleUrls: ['./account-modal.component.scss']
 })
-export class AccountModalComponent implements OnInit {
+export class AccountModalComponent implements OnInit, OnChanges {
 	@Input() account?: Account;
 	@Output() submit = new EventEmitter<Omit<Account, 'id' | 'avatar_url'>>();
 	@Output() close = new EventEmitter<void>();
@@ -25,11 +25,28 @@ export class AccountModalComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.account) {
-			this.name = this.account.name;
-			this.username = this.account.username;
-			this.email = this.account.email;
-			this.type = this.account.type;
+			this.initializeFields(this.account);
+		} else {
+			this.cleanFields();
 		}
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes['account']) {
+			const newAccount = changes['account'].currentValue;
+			if (newAccount) {
+				this.initializeFields(newAccount);
+			} else {
+				this.cleanFields();
+			}
+		}
+	}
+
+	private initializeFields(account: Account) {
+		this.name = account.name;
+		this.username = account.username;
+		this.email = account.email;
+		this.type = account.type;
 	}
 
 	onSubmit() {
@@ -67,7 +84,6 @@ export class AccountModalComponent implements OnInit {
 	}
 
 	cleanFields() {
-		this.account = undefined;
 		this.name = '';
 		this.username = '';
 		this.email = '';

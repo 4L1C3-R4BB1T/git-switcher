@@ -193,6 +193,13 @@ export class AccountService {
 			if (scope === 'local') {
 				const repoPath = await this.electronApiService.selectRepoDialog();
 				if (!repoPath) return;
+
+				const isGit = await this.electronApiService.isGitRepo(repoPath);
+				if (!isGit) {
+					this.toastrService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
+					return;
+				}
+
 				const result = await this.electronApiService.getGitConfig({ scope, repoPath } as any);
 				this.toastrService.info(result, `Configurações Locais`);
 			} else {
@@ -209,6 +216,12 @@ export class AccountService {
 			try {
 				const repoPath = await this.electronApiService.selectRepoDialog();
 				if (!repoPath) return false;
+
+				const isGit = await this.electronApiService.isGitRepo(repoPath);
+				if (!isGit) {
+					this.toastrService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
+					return false;
+				}
 
 				const result = await this.electronApiService.resetGitConfig({ scope, repoPath } as any);
 				this.localGitService.remove(repoPath);

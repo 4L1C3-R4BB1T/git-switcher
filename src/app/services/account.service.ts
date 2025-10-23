@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { Account } from '../models/account';
+import { DialogService } from './dialog.service';
 import { ElectronApiService } from './electron-api.service';
 import { GithubService } from './github.service';
 import { LocalGitService } from './local-git.service';
+import { NotificationService } from './notification.service';
 
 type LocalGitConfig = {
 	repoPath: string;
@@ -24,7 +25,8 @@ export class AccountService {
 
 	constructor(
 		private githubService: GithubService,
-		private toastrService: ToastrService,
+		private notificationService: NotificationService,
+		private dialogService: DialogService,
 		private localGitService: LocalGitService,
 		private electronApiService: ElectronApiService
 	) {
@@ -47,7 +49,7 @@ export class AccountService {
 			const userData = await firstValueFrom(this.githubService.getUser(account.username));
 			avatar_url = userData.avatar_url;
 		} catch (error) {
-			this.toastrService.error("Usuário não encontrado.");
+			this.notificationService.error("Usuário não encontrado.");
 			return;
 		}
 
@@ -59,7 +61,7 @@ export class AccountService {
 
 		this.accounts.push(newAccount);
 		this.saveAccounts();
-		this.toastrService.success("Conta adicionada com sucesso.");
+		this.notificationService.success("Conta adicionada com sucesso.");
 	}
 
 	saveAccounts(): void {
@@ -72,27 +74,17 @@ export class AccountService {
 			: 1;
 	}
 
-	async setActiveAccount(id: number, scope: 'local' | 'global'): Promise<void> {
-		const activeAcc = this.accounts.find(acc => acc.id === id);
+	async setGlobalAccount(account: Account): Promise<void> {
+		const activeAcc = this.accounts.find(acc => acc.id === account.id);
 		if (!activeAcc) {
-			this.toastrService.error("Conta não encontrada.");
+			this.notificationService.error("Conta não encontrada.");
 			return;
-		}
-
-		let finalScope = scope;
-
-		if (scope === 'local') {
-			const isLocallyTracked = this.localGitService.getReposByAccount(id).length > 0;
-			if (!isLocallyTracked) {
-				this.toastrService.warning("Esta conta não está associada a nenhum repositório local configurado. Ativando como global.");
-				finalScope = 'global';
-			}
 		}
 
 		this.accounts = this.accounts.map(acc => ({
 			...acc,
-			isActive: acc.id === id,
-			scope: acc.id === id ? finalScope : undefined
+			isActive: acc.id === account.id,
+			scope: acc.id === account.id ? 'global' : undefined
 		}));
 		this.saveAccounts();
 
@@ -100,20 +92,20 @@ export class AccountService {
 			await this.electronApiService.setGitConfig({
 				userName: activeAcc.name,
 				userEmail: activeAcc.email,
-				scope: finalScope
+				scope: 'global'
 			});
-			this.toastrService.success(
+			this.notificationService.success(
 				`Git configurado com: ${activeAcc.name} <${activeAcc.email}>`,
-				`Conta ativada (${finalScope})`
+				`Conta ativada (global)`
 			);
 		} catch (err: any) {
 			this.accounts = this.accounts.map(acc => ({
 				...acc,
-				scope: acc.id === id ? undefined : acc.scope
+				scope: acc.id === account.id ? undefined : acc.scope
 			}));
 			this.saveAccounts();
 
-			this.toastrService.error("Erro ao configurar Git global", err.message);
+			this.notificationService.error("Erro ao configurar Git global", err.message);
 		}
 	}
 
@@ -124,11 +116,11 @@ export class AccountService {
 		try {
 			const isRepo = await this.electronApiService.isGitRepo(repoPath);
 			if (!isRepo) {
-				this.toastrService.error(`O diretório selecionado não é um repositório Git válido. Verifique se contém a pasta .git.`);
+				this.notificationService.error(`O diretório selecionado não é um repositório Git válido.`);
 				return;
 			}
 		} catch (err: any) {
-			this.toastrService.error(`Falha ao verificar o diretório: ${err.message}`);
+			this.notificationService.error(`Falha ao verificar o diretório: ${err.message}`);
 			return;
 		}
 
@@ -142,13 +134,13 @@ export class AccountService {
 				repoPath
 			});
 
-			this.toastrService.success(
+			this.notificationService.success(
 				`Conta local configurada para ${repoPath}`,
 				'Git Local'
 			);
 		} catch (err: any) {
 			this.localGitService.remove(repoPath);
-			this.toastrService.error("Erro ao configurar Git local. Associação removida.", err.message);
+			this.notificationService.error("Erro ao configurar Git local. Associação removida.", err.message);
 		}
 	}
 
@@ -157,7 +149,7 @@ export class AccountService {
 	}
 
 	removeAccount(id: number): void {
-		const confirmar = window.confirm('Tem certeza que deseja remover esta conta?');
+		const confirmar = this.dialogService.confirm('Tem certeza que deseja remover esta conta?');
 		if (!confirmar) return;
 
 		this.accounts = this.accounts.filter(acc => acc.id !== id);
@@ -170,11 +162,11 @@ export class AccountService {
 				const updated = localConfigs.filter((item: LocalGitConfig) => item.accountId !== id);
 				localStorage.setItem(this.LOCAL_GIT_STORAGE_KEY, JSON.stringify(updated));
 			} catch (e) {
-				this.toastrService.warning('Não foi possível limpar configurações locais antigas.');
+				this.notificationService.warning('Não foi possível limpar configurações locais antigas.');
 			}
 		}
 
-		this.toastrService.success("Conta removida com sucesso.");
+		this.notificationService.success("Conta removida com sucesso.");
 	}
 
 	updateAccount(updated: Account): void {
@@ -185,7 +177,7 @@ export class AccountService {
 			return acc
 		});
 		this.saveAccounts();
-		this.toastrService.success("Conta atualizada com sucesso.");
+		this.notificationService.success("Conta atualizada com sucesso.");
 	}
 
 	async viewGitConfig(scope: 'local' | 'global') {
@@ -196,18 +188,18 @@ export class AccountService {
 
 				const isGit = await this.electronApiService.isGitRepo(repoPath);
 				if (!isGit) {
-					this.toastrService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
+					this.notificationService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
 					return;
 				}
 
 				const result = await this.electronApiService.getGitConfig({ scope, repoPath } as any);
-				this.toastrService.info(result, `Configurações Locais`);
+				this.notificationService.info(result, `Configurações Locais`);
 			} else {
 				const result = await this.electronApiService.getGitConfig({ scope });
-				this.toastrService.info(result, `Configurações Globais`);
+				this.notificationService.info(result, `Configurações Globais`);
 			}
 		} catch (err: any) {
-			this.toastrService.error(err.message);
+			this.notificationService.error(err.message);
 		}
 	}
 
@@ -219,25 +211,25 @@ export class AccountService {
 
 				const isGit = await this.electronApiService.isGitRepo(repoPath);
 				if (!isGit) {
-					this.toastrService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
+					this.notificationService.error('O caminho selecionado não é um repositório Git válido.', 'Erro');
 					return false;
 				}
 
 				const result = await this.electronApiService.resetGitConfig({ scope, repoPath } as any);
 				this.localGitService.remove(repoPath);
-				this.toastrService.info(result, `Resetado (${scope})`);
+				this.notificationService.info(result, `Resetado (${scope})`);
 				return true;
 			} catch (err: any) {
-				this.toastrService.error(err.message);
+				this.notificationService.error(err.message);
 				return false;
 			}
 		} else {
 			try {
 				const msg = await this.electronApiService.resetGitConfig({ scope });
-				this.toastrService.success(msg, `Resetado (${scope})`);
+				this.notificationService.success(msg, `Resetado (${scope})`);
 				return false;
 			} catch (err: any) {
-				this.toastrService.error(err.message);
+				this.notificationService.error(err.message);
 				return false;
 			}
 		}
@@ -246,8 +238,8 @@ export class AccountService {
 	exportAccounts(): void {
 		const exportData = this.accounts.map(account => ({ ...account, isActive: false }));
 		this.electronApiService.exportAccounts(exportData)
-			.then(() => this.toastrService.success('Contas exportadas com sucesso!'))
-			.catch(err => this.toastrService.error('Erro ao exportar', err.message));
+			.then(() => this.notificationService.success('Contas exportadas com sucesso!'))
+			.catch(err => this.notificationService.error('Erro ao exportar', err.message));
 	}
 
 	importAccounts(): void {
@@ -255,11 +247,11 @@ export class AccountService {
 			.then((imported: Account[]) => {
 				this.accounts = [...this.accounts, ...imported];
 				this.saveAccounts();
-				this.toastrService.success('Contas importadas com sucesso!');
+				this.notificationService.success('Contas importadas com sucesso!');
 				localStorage.removeItem(this.LOCAL_GIT_STORAGE_KEY);
 				window.location.reload();
 			})
-			.catch(err => this.toastrService.error('Erro ao importar', err.message));
+			.catch(err => this.notificationService.error('Erro ao importar', err.message));
 	}
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LocalGitConfig } from '../models/local-git-config';
+import { LocalGitConfig } from '../models/git-config';
 
 @Injectable({ providedIn: 'root' })
 export class LocalGitService {

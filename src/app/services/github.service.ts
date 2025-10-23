@@ -7,7 +7,6 @@ import { GitHubUser } from '../models/github-user';
 	providedIn: 'root'
 })
 export class GithubService {
-
 	private baseUrl = 'https://api.github.com/users';
 
 	constructor(private http: HttpClient) { }
@@ -15,5 +14,4 @@ export class GithubService {
 	getUser(username: string): Observable<GitHubUser> {
 		return this.http.get<GitHubUser>(`${this.baseUrl}/${username}`);
 	}
-
 }

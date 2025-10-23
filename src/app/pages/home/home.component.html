@@ -51,7 +51,7 @@
 				[account]="acc"
 				[linkedRepos]="getLinkedRepos(acc.id)"
 				[usedLocally]="isAccountUsedLocally(acc.id)"
-				(activate)="setActive($event)"
+				(activateGlobal)="setGlobal(acc)"
 				(activateLocal)="setLocal(acc)"
 				(edit)="openEditModal($event)"
 				(remove)="removeAccount($event)"

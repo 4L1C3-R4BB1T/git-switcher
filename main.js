@@ -125,8 +125,8 @@ ipcMain.handle('get-commits', async (event, repoPath) => {
 ipcMain.handle('is-git-repo', async (_, repoPath) => {
 	try {
 		const gitPath = join(repoPath, '.git');
-		fs.access(gitPath, fs.constants.F_OK);
-		return true;
+		const stats = fs.statSync(gitPath);
+		return stats.isDirectory();
 	} catch (error) {
 		return false;
 	}

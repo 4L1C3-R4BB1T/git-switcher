@@ -1,24 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Account } from '../models/account';
-
-type GitCommit = {
-	author: string;
-	message: string;
-	date: string;
-};
-
-type GitConfigSetArgs = {
-	userName: string;
-	userEmail: string;
-	scope: 'local' | 'global';
-	repoPath?: string;
-};
-
-type GitConfigGetArgs = {
-	scope: 'local' | 'global';
-	repoPath?: string;
-};
-
+import { GitCommit, GitConfigGetArgs, GitConfigSetArgs } from '../models/git-config';
 
 @Injectable({
 	providedIn: 'root',

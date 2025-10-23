@@ -73,9 +73,13 @@ export class HomeComponent implements OnInit {
 		this.showModal = false;
 	}
 
-	setActive({ id, scope }: { id: number; scope: 'local' | 'global' }) {
-		this.accountService.setActiveAccount(id, scope);
+	setGlobal(account: Account) {
+		this.accountService.setGlobalAccount(account);
 		this.loadAccounts();
+	}
+
+	setLocal(account: Account) {
+		this.accountService.setLocalAccount(account);
 	}
 
 	removeAccount(id: number) {
@@ -83,9 +87,6 @@ export class HomeComponent implements OnInit {
 		this.loadAccounts();
 	}
 
-	setLocal(account: Account) {
-		this.accountService.setLocalAccount(account);
-	}
 
 	getLinkedRepos(accountId: number): string[] {
 		return this.localGitService.getReposByAccount(accountId);

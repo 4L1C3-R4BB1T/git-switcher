@@ -15,16 +15,12 @@ export class CardComponent {
 	@Input() linkedRepos: string[] = [];
 	@Input() usedLocally: boolean = false;
 
-	@Output() activate = new EventEmitter<{ id: number; scope: 'local' | 'global'; }>();
+	@Output() activateGlobal = new EventEmitter<void>();
 	@Output() activateLocal = new EventEmitter<void>();
 	@Output() edit = new EventEmitter<Account>();
 	@Output() remove = new EventEmitter<number>();
 
 	@Output() viewHistory = new EventEmitter<string>();
-
-	setActive(scope: 'local' | 'global') {
-		this.activate.emit({ id: this.account.id, scope });
-	}
 
 	getRepoName(path: string): string {
 		return path.split(/[/\\]/).pop() ?? path;

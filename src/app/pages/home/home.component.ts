@@ -5,7 +5,8 @@ import { CardComponent } from '../../components/card/card.component';
 import { CommitHistoryModalComponent } from '../../components/commit-history-modal/commit-history-modal.component';
 import { Account } from '../../models/account';
 import { AccountService } from '../../services/account.service';
-import { LocalGitService } from '../../services/local-git.service';
+import { DialogService } from '../../services/dialog.service';
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
 	selector: 'app-home',
@@ -30,7 +31,8 @@ export class HomeComponent implements OnInit {
 
 	constructor(
 		private accountService: AccountService,
-		private localGitService: LocalGitService
+		private localStorageService: LocalStorageService,
+		private dialogService: DialogService
 	) { }
 
 	ngOnInit(): void {
@@ -87,9 +89,8 @@ export class HomeComponent implements OnInit {
 		this.loadAccounts();
 	}
 
-
 	getLinkedRepos(accountId: number): string[] {
-		return this.localGitService.getReposByAccount(accountId);
+		return this.localStorageService.getReposByAccount(accountId);
 	}
 
 	getFolderName(path: string): string {
@@ -97,7 +98,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	isAccountUsedLocally(accountId: number): boolean {
-		return this.localGitService.getReposByAccount(accountId).length > 0;
+		return this.localStorageService.getReposByAccount(accountId).length > 0;
 	}
 
 	viewConfig(scope: 'local' | 'global') {
@@ -105,15 +106,15 @@ export class HomeComponent implements OnInit {
 	}
 
 	async resetConfig(scope: 'local' | 'global') {
-		if (window.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
+		if (this.dialogService.confirm(`Tem certeza que deseja resetar as configurações ${scope}?`)) {
 			try {
 				const needsReload = await this.accountService.resetGitConfig(scope);
 				if (needsReload) {
 					window.location.reload();
 				}
-				this.loadAccounts();
 			} catch (error) {
-				this.loadAccounts();
+			} finally {
+				this.loadAccounts()
 			}
 		}
 	}

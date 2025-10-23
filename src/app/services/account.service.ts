@@ -4,7 +4,7 @@ import { Account } from '../models/account';
 import { DialogService } from './dialog.service';
 import { ElectronApiService } from './electron-api.service';
 import { GithubService } from './github.service';
-import { LocalGitService } from './local-git.service';
+import { LocalStorageService } from './local-storage.service';
 import { NotificationService } from './notification.service';
 
 type LocalGitConfig = {
@@ -16,18 +16,17 @@ type LocalGitConfig = {
 	providedIn: 'root',
 })
 export class AccountService {
-
 	private readonly STORAGE_KEY = 'accounts';
 	private readonly LOCAL_GIT_STORAGE_KEY = 'local-git-configs';
-	accounts: Account[] = [];
 
+	accounts: Account[] = [];
 	avatar?: string;
 
 	constructor(
 		private githubService: GithubService,
 		private notificationService: NotificationService,
 		private dialogService: DialogService,
-		private localGitService: LocalGitService,
+		private localStorageService: LocalStorageService,
 		private electronApiService: ElectronApiService
 	) {
 		this.loadAccounts();
@@ -53,11 +52,7 @@ export class AccountService {
 			return;
 		}
 
-		const newAccount: Account = {
-			id: this.generateId(),
-			...account,
-			avatar_url
-		};
+		const newAccount: Account = { id: this.generateId(), ...account, avatar_url };
 
 		this.accounts.push(newAccount);
 		this.saveAccounts();
@@ -69,9 +64,7 @@ export class AccountService {
 	}
 
 	generateId(): number {
-		return this.accounts.length > 0
-			? Math.max(...this.accounts.map(acc => acc.id)) + 1
-			: 1;
+		return this.accounts.length > 0 ? Math.max(...this.accounts.map(acc => acc.id)) + 1 : 1;
 	}
 
 	async setGlobalAccount(account: Account): Promise<void> {
@@ -81,30 +74,22 @@ export class AccountService {
 			return;
 		}
 
-		this.accounts = this.accounts.map(acc => ({
-			...acc,
-			isActive: acc.id === account.id,
-			scope: acc.id === account.id ? 'global' : undefined
-		}));
-		this.saveAccounts();
-
 		try {
+			this.accounts = this.accounts.map(acc => ({
+				...acc,
+				isActive: acc.id === account.id,
+				scope: acc.id === account.id ? 'global' : undefined
+			}));
+			this.saveAccounts();
+
 			await this.electronApiService.setGitConfig({
 				userName: activeAcc.name,
 				userEmail: activeAcc.email,
 				scope: 'global'
 			});
-			this.notificationService.success(
-				`Git configurado com: ${activeAcc.name} <${activeAcc.email}>`,
-				`Conta ativada (global)`
-			);
-		} catch (err: any) {
-			this.accounts = this.accounts.map(acc => ({
-				...acc,
-				scope: acc.id === account.id ? undefined : acc.scope
-			}));
-			this.saveAccounts();
 
+			this.notificationService.success(`Git configurado com: ${activeAcc.name} <${activeAcc.email}>`, `Conta ativada (global)`);
+		} catch (err: any) {
 			this.notificationService.error("Erro ao configurar Git global", err.message);
 		}
 	}
@@ -124,8 +109,6 @@ export class AccountService {
 			return;
 		}
 
-		this.localGitService.set(repoPath, account.id);
-
 		try {
 			await this.electronApiService.setGitConfig({
 				userName: account.name,
@@ -134,12 +117,10 @@ export class AccountService {
 				repoPath
 			});
 
-			this.notificationService.success(
-				`Conta local configurada para ${repoPath}`,
-				'Git Local'
-			);
+			this.notificationService.success(`Conta local configurada para ${repoPath}`, 'Git Local');
+			this.localStorageService.set(repoPath, account.id);
 		} catch (err: any) {
-			this.localGitService.remove(repoPath);
+			this.localStorageService.remove(repoPath);
 			this.notificationService.error("Erro ao configurar Git local. Associação removida.", err.message);
 		}
 	}
@@ -216,8 +197,10 @@ export class AccountService {
 				}
 
 				const result = await this.electronApiService.resetGitConfig({ scope, repoPath } as any);
-				this.localGitService.remove(repoPath);
+
+				this.localStorageService.remove(repoPath);
 				this.notificationService.info(result, `Resetado (${scope})`);
+
 				return true;
 			} catch (err: any) {
 				this.notificationService.error(err.message);
@@ -253,5 +236,4 @@ export class AccountService {
 			})
 			.catch(err => this.notificationService.error('Erro ao importar', err.message));
 	}
-
 }

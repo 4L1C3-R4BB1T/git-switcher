@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LocalGitConfig } from '../models/git-config';
 
 @Injectable({ providedIn: 'root' })
-export class LocalGitService {
+export class LocalStorageService {
 	private readonly KEY = 'local-git-configs';
 
 	set(repoPath: string, accountId: number): void {
@@ -20,9 +20,7 @@ export class LocalGitService {
 	}
 
 	getReposByAccount(accountId: number): string[] {
-		return this.getAll()
-			.filter(c => c.accountId === accountId)
-			.map(c => c.repoPath);
+		return this.getAll().filter(c => c.accountId === accountId).map(c => c.repoPath);
 	}
 
 	remove(repoPath: string): void {

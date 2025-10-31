@@ -6,6 +6,7 @@ import { ElectronApiService } from './electron-api.service';
 import { GithubService } from './github.service';
 import { LocalStorageService } from './local-storage.service';
 import { NotificationService } from './notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type LocalGitConfig = {
 	repoPath: string;
@@ -48,7 +49,11 @@ export class AccountService {
 			const userData = await firstValueFrom(this.githubService.getUser(account.username));
 			avatar_url = userData.avatar_url;
 		} catch (error) {
-			this.notificationService.error("Usuário não encontrado.");
+			if (error instanceof HttpErrorResponse && error.status === 404) {
+				this.notificationService.error(`O usuário "${account.username}" não existe no GitHub.`);
+			} else {
+				this.notificationService.error("Falha ao verificar o usuário no GitHub. Tente novamente.");
+			}
 			return;
 		}
 
